@@ -1,5 +1,6 @@
  import React from 'react'
- import styles from "../styles/start.module.css" 
+import styles from "../styles/start.module.css" 
+import UserMenu from "../components/UserMenu"
 import configData from '../kConfig_consts.json'
  class Start extends React.Component 
  {
@@ -17,13 +18,7 @@ import configData from '../kConfig_consts.json'
                       this is the floor
                   </div>
                   <div className={sideClasses}>
-                       {
-                         configData.SIDE_MENU_OPTIONS.forEach((d,i)=>{
-                                 console.log(d,i);
-                         menuItems.push((<div key={i}>{d.name}</div> ))    ;
-                            })
-                        }
-                        {menuItems} 
+                        <UserMenu menuItems= {configData.SIDE_MENU_OPTIONS} ></UserMenu>
                       this is the side
                   </div>
               </div>
