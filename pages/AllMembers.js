@@ -1,10 +1,10 @@
 import React from 'react'
 import configData from '../kConfig.json'
+import {AddMemberForm} from '../components/AddMemberForm'
 import {KList} from '../components/kList'
-//import { FontAwesomeIcon } from '@fortawesome/fontawesome-free'
 import { faMinusCircle,faEdit } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-//import kCourrier from "../KLIBJS/KCourrier"
+import kCourrier from "../KLIBJS/KCourrier"
 import AsyncData from '../components/async-data'
  class AllMembers extends React.Component 
  {
@@ -12,13 +12,15 @@ import AsyncData from '../components/async-data'
     {
         super(props); 
 
+        this.addFormElement = React.createRef();
         let map = {};
-        if(props.emailListMembers)
-            props.emailListMembers.forEach(element=>map[element.id] = element );       
+        if(props.listDetails.contents)
+            props.listDetails.contents.forEach(element=>map[element.id] = element );       
       
         this.state = {
-            listMembers: props.emailListMembers || null,
+            listMembers: props.listDetails.contents || null,
             error: props.error || null,
+            listId:props.listDetails.id,
             map
         }
 
@@ -31,9 +33,7 @@ import AsyncData from '../components/async-data'
     {
         let map = {};
         let newState = Object.assign({},this.state);
-
-        //todo: fix icons
-        
+      
 
         newState.listMembers = memberLists || newState.listMembers;          
         newState.listMembers.forEach(element=>map[element.id] = element );       
@@ -42,15 +42,57 @@ import AsyncData from '../components/async-data'
         this.setState(newState);
     }
 
-    removeFromList()
-    {}
+  addToList(event)
+  { 
+      console.log(this.state);
+      console.log(this.props);
+      console.log(this.addFormElement.current.state);
 
+      const newMember = this.addFormElement.current.state;
+      kCourrier.setHTTPs(true).post( configData.SUBSCRIBER_ADD_TO_LIST,newMember)
+      .then((response)=>{
+        console.log("it finished",response)
+        return response.json();
+      })
+      .then(this.updateMemberList.bind(this))   
+      .then(this.closeForm.bind(this))   
+      .catch(console.error);
+  }
+    removeFromList()
+    {
+
+         console.log(this);
+
+      
+      const elementClickedOn = event.target;
+      const id = elementClickedOn.getAttribute("data-member-id");
+      let chosenMember = this.state.map[id];
+     
+      kCourrier.post( configData.SUBSCRIBER_REMOVE_FROM_LIST,chosenMember)
+      .then((response)=>{
+        console.log("it finished",response)
+        return response.json();
+      })
+      .then(this.updateMemberList.bind(this))        
+      .then(this.render.bind(this))
+      .catch(console.error);
+       console.log(chosenMember);
+      console.log(event.target);
+
+    }
+
+  closeForm()
+  {
+      this.addFormElement.current.onCloseFormClicked();
+  }
     render(){
         return(
         <React.Fragment>
             <div>
                 all members loaded
             </div>
+            
+            <AddMemberForm  id="addMemberForm" key="addForm" listId={this.state.listId} ref= {this.addFormElement}  onSubmit={this.addToList.bind(this) } />
              <KList title="Test" items={this.state.listMembers} error={this.state.error} logMode={false}>
         
                  {
@@ -81,10 +123,12 @@ import AsyncData from '../components/async-data'
   export default AllMembers;
 
   export async  function getStaticProps(context) {
-  const emailListMembers  = await AsyncData.getListMembers();
+      console.log("context:");
+      console.log(context);
+  const listDetails  = await AsyncData.getListMembers();
   
 
   return {
-    props: {emailListMembers}, // will be passed to the page component as props
+    props: {listDetails}, // will be passed to the page component as props
   }
 }

@@ -22,9 +22,12 @@ export default class extends  React.Component {
   {
     id = id || configData.DEFAULT_LIST_ID;
 
+    const result = {};
+    result.id = id;
     const res = await kCourrier.get(configData.FETCH_LIST_BY_ID+id);
-    const data = await res.json()
-    return data
+    const data = await res.json();
+    result.contents = data;
+    return result;
 
   }
 }
