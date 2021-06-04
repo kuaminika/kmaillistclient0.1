@@ -1,7 +1,7 @@
  
 import configData from "../kConfig.json";//"../kConfig.json"; 
  
- 
+
  function lanchKCourrier(kLib){
 
     var blankOptions = {
@@ -54,13 +54,46 @@ import configData from "../kConfig.json";//"../kConfig.json";
 			console.log(problem);
 			console.error(problem);
 	     }
+        
 
+        self.setHTTPs = (httpsOn)=>{
+            console.log("setting https:"+(httpsOn?"on":"off"));
+            if(!self.hostURL) 
+            {
+                console.log("no self.url");
+                return self;
+            }
+            let http = "http";
+            let https = "https";
+            
+        
+            let hashttps = self.hostURL.indexOf(https)>=0;
+            let hashttpOnly = self.hostURL.indexOf(http)>=0 && !hashttps;
+            if(hashttps && httpsOn ) return self;
+
+            if(hashttpOnly  && httpsOn)
+            {
+              self.hostURL=  self.hostURL.replace(http,https);
+               console.log(self.hostURL);
+                return self;
+            }
+
+            if(hashttps && !httpsOn )
+            {
+              self.hostURL =   self.hostURL.replace(https,http);
+               console.log(self.hostURL);
+               return self;
+            }
+
+            return self;
+
+        }
 		
 		 self.post = function(restOfUrl,data,headerRules)
 		 {
 			 console.log("posting:"+restOfUrl);
-			headerRules = headerRules || {  'Content-Type': 'application/json'  };
-			
+            headerRules = headerRules || {  'Content-Type': 'application/json'  };
+        
 			var promiseResult = new Promise(function(resolve,reject)
 			{
 
@@ -72,7 +105,7 @@ import configData from "../kConfig.json";//"../kConfig.json";
 				 return 	fetch(fullURL,
 						{
 						  method: 'POST',
-						  body: JSON.stringify(data),
+                          body: JSON.stringify(data),                         
 						  headers: headerRules
 						})        
 						.then(response => {
