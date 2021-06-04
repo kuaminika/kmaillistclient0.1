@@ -6,6 +6,7 @@ import { faMinusCircle,faEdit } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import kCourrier from "../KLIBJS/KCourrier"
 import AsyncData from '../components/async-data'
+ import KLayout from "../components/kLayout"
  class AllMembers extends React.Component 
  {
     constructor(props)
@@ -87,7 +88,7 @@ import AsyncData from '../components/async-data'
   }
     render(){
         return(
-        <React.Fragment>
+        <KLayout>
             <div>
                 all members loaded
             </div>
@@ -114,7 +115,7 @@ import AsyncData from '../components/async-data'
                     )                     
                  }
             </KList>
-            </React.Fragment>
+            </KLayout>
         )
     }
  }
