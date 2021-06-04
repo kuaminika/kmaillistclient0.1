@@ -1,0 +1,6 @@
+{
+    "SIDE_MENU_TITLE": "Kmail-menu"
+  , "SIDE_MENU_OPTIONS":[{"name":"Send email","target":""},
+                         {"name":"All Members","target":"/AllMembers"},
+                         {"name":"Change list","target":""}]
+}
